@@ -23,7 +23,7 @@ jobs:
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
 
@@ -47,7 +47,7 @@ jobs:
           jpackage --type dmg --dest output --name ZeynSudoku --input jpackage-input --main-jar ZeynSudoku-1.0.0.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
 
       # TAHAP UPLOAD KE GITHUB RELEASES
-      - name: Upload ke GitHub Releases
+      - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') # Hanya upload kalau dipicu oleh Tag Versi
         with:
