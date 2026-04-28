@@ -1,0 +1,57 @@
+name: Zeyn Sudoku v1.0.0 Release
+
+on:
+  workflow_dispatch: # Mengizinkan eksekusi manual tombol "Run workflow" di GitHub
+  push:
+    tags:
+      - 'v*' # Otomatis jalan kalau kamu membuat release tag (contoh: v1.0.0)
+
+jobs:
+  build:
+    name: Build Installer on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    # Kita menyuruh GitHub menjalankan 2 OS sekaligus (Windows dan Mac)
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Fat JAR with Maven
+        run: mvn clean package
+
+      # TAHAP WINDOWS (.exe)
+      - name: Build Windows .exe Installer
+        if: runner.os == 'Windows'
+        run: |
+          mkdir jpackage-input
+          copy target\ZeynSudoku-1.0.0.jar jpackage-input\
+          jpackage --type exe --dest output --name ZeynSudoku --input jpackage-input --main-jar ZeynSudoku-1.0.0.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m" --win-shortcut --win-menu
+
+      # TAHAP MAC (.dmg)
+      - name: Build macOS .dmg Installer
+        if: runner.os == 'macOS'
+        run: |
+          mkdir jpackage-input
+          cp target/ZeynSudoku-1.0.0.jar jpackage-input/
+          jpackage --type dmg --dest output --name ZeynSudoku --input jpackage-input --main-jar ZeynSudoku-1.0.0.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
+
+      # TAHAP UPLOAD KE GITHUB RELEASES
+      - name: Upload ke GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') # Hanya upload kalau dipicu oleh Tag Versi
+        with:
+          files: |
+            output/*.exe
+            output/*.dmg
+            target/ZeynSudoku-1.0.0.jar

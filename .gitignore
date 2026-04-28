@@ -22,3 +22,19 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Abaikan hasil build Maven
+target/
+
+# Abaikan file konfigurasi NetBeans
+nbproject/private/
+nbproject/
+nbactions.xml
+nb-configuration.xml
+
+# Abaikan file Save Game Sudoku
+*.dat
+
+# Abaikan file sistem OS
+.DS_Store
+Thumbs.db
