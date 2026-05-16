@@ -2,86 +2,78 @@ package com.zeynthedev.zeynsudoku;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.control.Label;
-import javafx.scene.Node;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import javafx.stage.Modality;
+import javafx.util.Duration;
 
 public class PrimaryController implements Initializable {
 
-    @FXML
-    private Label lblLeft1, lblLeft2, lblLeft3, lblLeft4, lblLeft5, lblLeft6, lblLeft7, lblLeft8, lblLeft9;
-    
-    @FXML
-    private Label lblTimer, lblDifficulty;
-    
-    private Timeline timeline;
-    private int secondsRun = 0;
-    private String activeDifficulty = "Easy";
-    private int hintLeft = 10;
-    private int[][] currentSolution;
-    
-    @FXML
-    private GridPane sudokuGrid;
-    
-    @FXML private javafx.scene.layout.VBox pauseOverlay;
+    @FXML private Label lblLeft1, lblLeft2, lblLeft3, lblLeft4, lblLeft5, lblLeft6, lblLeft7, lblLeft8, lblLeft9;
+    @FXML private Label lblTimer, lblDifficulty, lblHintCount;
+    @FXML private GridPane sudokuGrid;
+    @FXML private VBox pauseOverlay;
+    @FXML private javafx.scene.layout.Pane marqueePane;
+    @FXML private Label lblMarquee;
+    private javafx.animation.TranslateTransition marqueeTransition;
 
-    // array 2d to saving 81 box references
     private TextField[][] boardData = new TextField[9][9];
-
-    // active/chosen number by user
+    private Timeline timeline;
     private int selected = -1;
-
-    // saving left number indicator
-    private int[] leftNum = new int[10];
     
-    @FXML
-    private Label lblHintCount;
-    
-    private int hintTotal = 10;
+    // --- MVC: INSTANS MODEL (Sang Otak) ---
+    private SudokuGame game;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // build the UI board
+        game = new SudokuGame(); // Inisialisasi Otak Game
+        
         createSudokuBoard();
-        // create the puzzle
+        
         if(GameState.isContinue && SaveManager.hasSave()) {
             loadGameData();
         } else {
-            actNewGame();
+            // --- LOGIKA BARU: LANGSUNG BUAT GAME DARI KURIR ---
+            game.startNewGame(GameState.targetDifficulty);
+            
+            lblDifficulty.setText(game.getDifficulty().toUpperCase());
+            updateHintUI();
+            renderBoardUI();
+            
+            lblTimer.setText("00:00");
+            startTimer();
+//            System.out.println("Game is successfully loaded with difficulty: " + GameState.targetDifficulty);
         }
         
         if (pauseOverlay != null) {
-            pauseOverlay.setOnMouseClicked(event -> {
-                actPause();
-            });
+            pauseOverlay.setOnMouseClicked(event -> actPause());
         }
+        
+        setupMarquee();
+        AudioManager.getInstance().setOnTrackChange(() -> setupMarquee());
     }
 
-    // bottom button logic
     @FXML
     private void actMenu() {
-        // Simpan status: apakah game sedang berjalan?
         boolean wasRunning = (timeline != null && timeline.getStatus() == Timeline.Status.RUNNING);
-
-        // Pause waktu selagi dialog muncul
         if (wasRunning) timeline.pause();
         
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -89,69 +81,47 @@ public class PrimaryController implements Initializable {
         alert.setHeaderText("Return");
         alert.setContentText("Are you sure to return to main menu?");
         
+        // --- SUNTIK TEMA KE DALAM DIALOG BAWAAN JAVAFX ---
+        // 1. Ambil CSS dari layar utama, masukkan ke dialog
+        alert.getDialogPane().getStylesheets().addAll(sudokuGrid.getScene().getStylesheets());
+        // 2. Beri nama class khusus agar mudah kita target di file CSS
+        alert.getDialogPane().getStyleClass().add("custom-alert");
+        // -------------------------------------------------
+        
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 saveCurrentGame();
                 try {
-                    App.setRoot("secondary"); // back to main menu
+                    App.setRoot("secondary");
                 } catch (IOException ex) {
-                    System.getLogger(PrimaryController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                    ex.printStackTrace();
                 }
-            } else if (timeline != null) {
-                if (wasRunning) timeline.play();
+            } else if (wasRunning) {
+                timeline.play();
             }
         });
     }
 
     @FXML
     private void actNewGame() {
+        // FUNGSI INI SEKARANG HANYA UNTUK TOMBOL "NEW GAME" DI KANAN LAYAR
+        boolean wasRunning = (timeline != null && timeline.getStatus() == Timeline.Status.RUNNING);
+        if (wasRunning) timeline.pause();
+
         String difficulty = showDifficulty();
         
-        //set the difficulty first
         if (difficulty != null) {
-            this.activeDifficulty = difficulty;
-            lblDifficulty.setText(difficulty.toUpperCase());
-            
-            // set the hint based on difficulty chosen
-            if (difficulty.equals("Easy")) hintTotal = 10;
-            else if (difficulty.equals("Medium")) hintTotal = 6;
-            else hintTotal = 3;
-            
-            hintLeft = hintTotal;
+            game.startNewGame(difficulty);
+            lblDifficulty.setText(game.getDifficulty().toUpperCase());
             updateHintUI();
-            
-            SudokuGenerator generator = new SudokuGenerator();
-            int[][] newPuzzle = generator.createPuzzle(difficulty);
-            this.currentSolution = generator.getSolutionBoard();
-            
-            // print the puzzle on the UI
-            for (int r = 0; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
-                    TextField box = boardData[r][c];
-                    int num = newPuzzle[r][c];
-
-                    // if it was used to play a game before, erased the past clue to write the new clues
-                    box.getProperties().remove("clue");
-
-                    if (num != 0) {
-                        // if a num exist, then it's clue generated by the SudokuGen
-                        box.setText(String.valueOf(num));
-                        box.getProperties().put("clue", true); // set editable = false for the clue
-                    } else {
-                        // if 0 the it's answer box to be filled
-                        box.setText("");
-                    }
-                }
-            }
-
             renderBoardUI();
             
-            // reset it
-            secondsRun = 0;
             lblTimer.setText("00:00");
             startTimer();
-
-            System.out.println("Game is successfully loaded!");
+//            System.out.println("Game is restarted with new difficulty!");
+        } else {
+            // Jika Cancel, cukup lanjutkan timer game yang sedang berjalan
+            if (wasRunning) timeline.play();
         }
     }
 
@@ -161,86 +131,40 @@ public class PrimaryController implements Initializable {
             if (timeline.getStatus() == Timeline.Status.RUNNING) {
                 timeline.pause();
                 pauseOverlay.setVisible(true);
-                System.out.println("Game is paused.");
             } else {
                 timeline.play();
                 pauseOverlay.setVisible(false);
-                System.out.println("Game is continued.");
             }
         }
     }
 
     @FXML
     private void actReset() {
-        //pause timer for showing confirmation pop up dialog
-        boolean wasRunning = false;
-        if (timeline != null && timeline.getStatus() == Timeline.Status.RUNNING) {
-            wasRunning = true;
-            timeline.pause();
-        }
+        boolean wasRunning = (timeline != null && timeline.getStatus() == Timeline.Status.RUNNING);
+        if (wasRunning) timeline.pause();
         
-        //show confirmation pop up dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Reset Confirmation");
         alert.setHeaderText("Reset Puzzle?");
-        alert.setContentText("All your answers will be erased and"
-                + " board will be returned to early state. Are you sure?");
-        
-        //get timer status to be used on lambda expression
-        final boolean finalWasRunning = wasRunning;
+        alert.setContentText("All your answers will be erased. Are you sure?");
         
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                for (int r = 0; r < 9; r++) {
-                    for (int c = 0; c < 9; c++) {
-                        TextField box = boardData[r][c];
-                        
-                        if (!box.getProperties().containsKey("clue")) {
-                            box.setText("");
-                        }
-                    }
-                }
-                
+                game.resetBoard(); // Model yang menghapus datanya
                 renderBoardUI();
-                System.out.println("Puzzle is reset.");
+//                System.out.println("Puzzle is reset.");
             }
-            if (finalWasRunning && timeline != null) {
-                timeline.play();
-            }
+            if (wasRunning) timeline.play();
         });
     }
 
     @FXML
     private void actHint() {
-        if (hintLeft > 0) {
-            java.util.List<int[]> emptyCells = new java.util.ArrayList<>();
-            
-            //getting all coordinates that still empty
-            for (int r = 0; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
-                    if (boardData[r][c].getText().isEmpty()) {
-                        emptyCells.add(new int[]{r, c});
-                    }
-                }
-            }
-            
-            //if they're exist, choose a random hint number
-            if(!emptyCells.isEmpty()) {
-                int[] target = emptyCells.get(new java.util.Random().nextInt(emptyCells.size()));
-                int row = target[0];
-                int col = target[1];
-                
-                //fill with a hint number from currentSolution
-                int correctNum = currentSolution[row][col];
-                boardData[row][col].setText(String.valueOf(correctNum));
-                
-                //mark as clue so it won't be editable
-                boardData[row][col].getProperties().put("clue", true);
-                
-                hintLeft--;
-                updateHintUI(); // Update UI angka sisa hint
-                renderBoardUI(); // Update warna papan
-            }
+        // Tanya Model apakah hint masih bisa digunakan
+        if (game.useHint()) {
+            AudioManager.getInstance().playSfxPlace();
+            updateHintUI();
+            renderBoardUI();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("ZeynSudoku");
@@ -252,13 +176,9 @@ public class PrimaryController implements Initializable {
 
     @FXML
     private void actChooseNum(ActionEvent event) {
-        // get element from recently clicked btn
         Node clickedBtn = (Node) event.getSource();
-
         selected = Integer.parseInt(clickedBtn.getUserData().toString());
-
-        System.out.println("Num inputter changed to: " + (selected == 0 ? "Delete" : selected));
-        
+//        System.out.println("Num inputter changed to: " + (selected == 0 ? "Delete" : selected));
         renderBoardUI();
     }
     
@@ -266,58 +186,49 @@ public class PrimaryController implements Initializable {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 TextField box = new TextField();
-
                 boardData[row][column] = box;
 
                 box.setPrefSize(45, 45);
                 box.setAlignment(Pos.CENTER);
-                box.setFont(Font.font("Sytem", 18));
-
+                box.setFont(Font.font("System", 18));
                 box.setEditable(false);
                 box.setFocusTraversable(false);
 
+                // Variabel final untuk dipakai di dalam Lambda (Event Handler)
+                final int r = row;
+                final int c = column;
+
                 box.setOnMouseClicked(event -> {
-                    // 1. check does it a clue box or not. If yes, ignore.
-                    if (box.getStyleClass().contains("clue")) {
-                        return;
-                    }
+                    if (game.isClue(r, c) || selected == -1) return;
 
-                    // 2. If user not choosing any number, ignore
-                    if (selected == -1) {
-                        return;
-                    }
-
-                    // 3. Logic to rewrite, delete, and fill
-                    String numString = String.valueOf(selected);
-
-                    if (selected == 0) {
-                        // if delete chosen, delete box content
-                        box.setText("");
-                    } else if (box.getText().equals(numString)) {
-                        // if the user click the box again with the same chosen number, the box will delete its content
-                        box.setText("");
+                    int currentNum = game.getNumAt(r, c);
+                    
+                    // Logika isi/hapus
+                    if (selected == 0 || currentNum == selected) {
+                        game.placeNum(r, c, 0); 
+                        // Putar suara ketik biasa saat menghapus angka
+                        AudioManager.getInstance().playSfxPlace(); 
                     } else {
-                        // if the box is empty or had different number, rewrite the content (the number) with currently chosen number
-                        box.setText(numString);
-                        box.setStyle("-fx-text-fill: #0078D7; -fx-font-weight: bold;");
+                        game.placeNum(r, c, selected);
+                        
+                        // --- CEK ERROR UNTUK MEMILIH SFX YANG TEPAT ---
+                        if (game.isError(r, c)) {
+                            AudioManager.getInstance().playSfxError(); // Suara salah (bentrok)
+                        } else {
+                            AudioManager.getInstance().playSfxPlace(); // Suara taruh angka aman
+                        }
                     }
+                    
 
                     renderBoardUI();
                     
-                    // ---------------------------------------------------------
                     // Auto Switch Logic
-                    // ---------------------------------------------------------
-                    
-                    // if selected num now was reached 0 (was filled all)
-                    if (selected >= 1 && selected <= 9 && leftNum[selected] == 0) {
-                        // find the next num that still had left nums to be filled
-                        for (int i = 1; i<= 9; i++) {
+                    if (selected >= 1 && selected <= 9 && game.getLeftNum(selected) == 0) {
+                        for (int i = 1; i <= 9; i++) {
                             int nextNum = (selected + i - 1) % 9 + 1;
-                            
-                            if (leftNum[nextNum] > 0) {
-                                selected = nextNum; // move chooser to new num
-                                System.out.println("Auto-switch to num " + selected);
-                                
+                            if (game.getLeftNum(nextNum) > 0) {
+                                selected = nextNum;
+//                                System.out.println("Auto-switch to num " + selected);
                                 renderBoardUI();
                                 break;
                             }
@@ -325,219 +236,175 @@ public class PrimaryController implements Initializable {
                     }
                 });
 
-                // border for each 3x3 domain logic
-                int top = (row % 3 == 0) ? 3 : 1;
-                int left = (column % 3 == 0) ? 3 : 1;
-                int bottom = (row == 8) ? 3 : 1;
-                int right = (column == 8) ? 3 : 1;
-
-                // CSS styling for the box
-                box.setStyle(
-                        "-fx-border-color: black; "
-                        + "-fx-border-width: " + top + " " + right + " " + bottom + " " + left + "; "
-                        + "-fx-background-color: white; "
-                        + // Basic color
-                        "-fx-background-radius: 0; "
-                        + // remove round corner from TextField default
-                        "-fx-border-radius: 0;"
-                        + // remove box padding
-                        "-fx-padding: 0;"
-                );
-
                 sudokuGrid.add(box, column, row);
             }
         }
     }
 
     private void renderBoardUI() {
-        // matrix for saving error boxes
-        boolean[][] isError = new boolean[9][9];
-        
-        int leftBox = 0;
-        boolean error = false;
-
-        // ---------------------------------------------------------
-        // BLOC 1: DATA CALCULATION (Calculate Left & Error Checking)
-        // ---------------------------------------------------------
-        for (int i = 1; i <= 9; i++) {
-            leftNum[i] = 9;
-        }
-
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                String text = boardData[r][c].getText();
-
-                if (text.isEmpty()) {
-                    leftBox++;
-                    continue;
-                }
-
-                int num = Integer.parseInt(text);
-                leftNum[num]--;
-
-                for (int i = 0; i < 9; i++) {
-                    if (i != c && boardData[r][i].getText().equals(text)) {
-                        isError[r][c] = true;
-                        isError[r][i] = true;
-                        error = true;
-                    }
-                    if (i != r && boardData[i][c].getText().equals(text)) {
-                        isError[r][c] = true;
-                        isError[i][c] = true;
-                        error = true;
-                    }
-                }
-
-                // checking the conflict with existing number on board
-                int startRow = (r / 3) * 3;
-                int startCol = (c / 3) * 3;
-                for (int i = startRow; i < startRow + 3; i++) {
-                    for (int j = startCol; j < startCol + 3; j++) {
-                        if ((i != r || j != c) && boardData[i][j].getText().equals(text)) {
-                            isError[r][c] = true;
-                            isError[i][j] = true;
-                            error = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // ---------------------------------------------------------
-        // BLOK 2: UPDATE BOX VISUAL (Single Source of Style)
-        // ---------------------------------------------------------
+        // --- BLOK 1: UPDATE VISUAL KOTAK (Hanya bertanya ke Model) ---
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
                 TextField box = boardData[r][c];
-                String text = box.getText();
+                int num = game.getNumAt(r, c);
+                boolean isClue = game.isClue(r, c);
+                boolean isError = game.isError(r, c);
 
-                // 1. Adjust Shape (3x3)
+                box.setText(num == 0 ? "" : String.valueOf(num));
+
                 int top = (r % 3 == 0) ? 3 : 1;
                 int left = (c % 3 == 0) ? 3 : 1;
                 int bottom = (r == 8) ? 3 : 1;
                 int right = (c == 8) ? 3 : 1;
-                String styleBorder = "-fx-border-color: black; -fx-border-width: " + top + " " + right + " " + bottom + " " + left + "; -fx-border-radius: 0; -fx-background-radius: 0; ";
-
-                // 2. Adjust Background Color -> HIGHLIGHT IS HERE
-                // Cek does this box content is equals with the chosen num
-                boolean isSelectedNum = !text.isEmpty() && selected != -1 && text.equals(String.valueOf(selected));
+                String styleLayout = "-fx-border-width: " + top + " " + right + " " + bottom + " " + left + "; -fx-border-radius: 0; -fx-background-radius: 0; -fx-padding: 0; ";
+                box.setStyle(styleLayout);
                 
-                String styleBg = "-fx-background-color: white; "; // Default bg color
+                box.getStyleClass().removeAll("sudoku-cell", "cell-clue", "cell-user", "cell-error", "cell-selected");
                 
-                if (isError[r][c]) {
-                    // 1st Priority: Error (Light Red)
-                    styleBg = "-fx-background-color: #FFCDD2; "; 
-                } else if (isSelectedNum) {
-                    // 2nd Priority: Selected/highlighted Num (Light Blue)
-                    styleBg = "-fx-background-color: #BBDEFB; "; 
-                }
+                box.getStyleClass().add("sudoku-cell");
 
-                // 3. Adjust Text Color (Font)
-                boolean isClue = box.getProperties().containsKey("clue");
-                String styleText = isClue ? "-fx-text-fill: black; -fx-font-weight: bold;" : "-fx-text-fill: #0078D7; -fx-font-weight: bold;";
-
-                if (isError[r][c]) {
-                    // If error, font becomes bold red
-                    styleText = "-fx-text-fill: #D32F2F; -fx-font-weight: bold;"; 
-                }
-
-                // 4. Apply all styling simultaneously
-                box.setStyle(styleBorder + styleBg + styleText);
+                boolean isSelectedNum = (num != 0 && selected != -1 && num == selected);
+                
+                if (isError) box.getStyleClass().add("cell-error"); 
+                else if (isSelectedNum) box.getStyleClass().add("cell-selected");
+                
+                
+                if (isClue) box.getStyleClass().add("cell-clue");
+                else box.getStyleClass().add("cell-user");
             }
         }
 
-        // ---------------------------------------------------------
-        // BLOK 3: UPDATE LEFT NUMBER VISUAL
-        // ---------------------------------------------------------
+        // --- BLOK 2: UPDATE INDIKATOR SISA ANGKA ---
         if (lblLeft1 != null) {
-            lblLeft1.setText(String.valueOf(leftNum[1]));
-            lblLeft2.setText(String.valueOf(leftNum[2]));
-            lblLeft3.setText(String.valueOf(leftNum[3]));
-            lblLeft4.setText(String.valueOf(leftNum[4]));
-            lblLeft5.setText(String.valueOf(leftNum[5]));
-            lblLeft6.setText(String.valueOf(leftNum[6]));
-            lblLeft7.setText(String.valueOf(leftNum[7]));
-            lblLeft8.setText(String.valueOf(leftNum[8]));
-            lblLeft9.setText(String.valueOf(leftNum[9]));
+            lblLeft1.setText(String.valueOf(game.getLeftNum(1)));
+            lblLeft2.setText(String.valueOf(game.getLeftNum(2)));
+            lblLeft3.setText(String.valueOf(game.getLeftNum(3)));
+            lblLeft4.setText(String.valueOf(game.getLeftNum(4)));
+            lblLeft5.setText(String.valueOf(game.getLeftNum(5)));
+            lblLeft6.setText(String.valueOf(game.getLeftNum(6)));
+            lblLeft7.setText(String.valueOf(game.getLeftNum(7)));
+            lblLeft8.setText(String.valueOf(game.getLeftNum(8)));
+            lblLeft9.setText(String.valueOf(game.getLeftNum(9)));
         }
         
-        // ---------------------------------------------------------
-        // BLOK 4: WIN CONDITION (placed on last)
-        // ---------------------------------------------------------
-        if (leftBox == 0 && !error) {
-            javafx.application.Platform.runLater(() -> {
-                winPopUp();
-            });
+        // --- BLOK 3: CEK MENANG ---
+        if (game.isGameWon()) {
+            javafx.application.Platform.runLater(this::winPopUp);
         }
     }
     
     private void winPopUp() {
         if (timeline != null) timeline.stop();
         
+        // --- PUTAR SUARA MENANG! ---
+        AudioManager.getInstance().playSfxWin();
+        // ---------------------------
+        
+        // --- RECORD STATS BEFORE EXIT ---
+        int hintsUsed = game.getHintTotal() - game.getHintLeft();
+        StatisticManager.recordWin(
+            game.getDifficulty(), 
+            game.getSecondsRun(), 
+            hintsUsed, 
+            game.getErrorMadeCount(), 
+            game.getHintLeft()
+        );
+        // -------------------------------------
+        
+        
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("ZeynSudoku");
         alert.setHeaderText("🎉 CONGRATULATION! 🎉");
         alert.setContentText("You've solved this puzzle!");
         
+        // --- SUNTIK TEMA KE DALAM DIALOG BAWAAN JAVAFX ---
+        // 1. Ambil CSS dari layar utama, masukkan ke dialog
+        alert.getDialogPane().getStylesheets().addAll(sudokuGrid.getScene().getStylesheets());
+        // 2. Beri nama class khusus agar mudah kita target di file CSS
+        alert.getDialogPane().getStyleClass().add("custom-alert");
+        // -------------------------------------------------
+        
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 SaveManager.deleteSave();
-                try {
-                    App.setRoot("secondary"); // back to main menu
-                } catch (IOException ex) {
-                    System.getLogger(PrimaryController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-                }
+                try { App.setRoot("secondary"); } 
+                catch (IOException ex) { ex.printStackTrace(); }
             }
         });
     }
     
     private void startTimer() {
-        // stop existing timer
-        if (timeline != null) {
-            timeline.stop();
-        }
+        if (timeline != null) timeline.stop();
         
-        // MENCETAK WAKTU SAAT INI KE LAYAR (Tanpa delay 1 detik)
-        int min = secondsRun / 60;
-        int sec = secondsRun % 60;
+        int min = game.getSecondsRun() / 60;
+        int sec = game.getSecondsRun() % 60;
         lblTimer.setText(String.format("%02d:%02d", min, sec));
         
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            secondsRun++;
+            game.setSecondsRun(game.getSecondsRun() + 1); // Tambah waktu di Model
             
-            int minute = secondsRun / 60;
-            int second = secondsRun % 60;
-            
-            String timeText = String.format("%02d:%02d", minute, second);
-            lblTimer.setText(timeText);
+            int minute = game.getSecondsRun() / 60;
+            int second = game.getSecondsRun() % 60;
+            lblTimer.setText(String.format("%02d:%02d", minute, second));
         }));
         
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
     
+    private void updateHintUI(){
+        if (lblHintCount != null) {
+            lblHintCount.setText(game.getHintLeft() + "/" + game.getHintTotal());
+        }
+    }
+    
+    private void saveCurrentGame() {
+        // Ambil datanya langsung dari Model
+        SaveManager.saveGame(
+            game.getDifficulty(), 
+            game.getSecondsRun(), 
+            game.getHintLeft(), 
+            game.getBoard(), 
+            game.getClues(), 
+            game.getSolution()
+        );
+//        System.out.println("Game successfully saved!");
+    }
+    
+    private void loadGameData() {
+        Properties props = SaveManager.loadGame();
+        if (props == null) return;
+        
+        game.loadGame(props); // Lempar properties ke Model untuk diurai
+        
+        lblDifficulty.setText(game.getDifficulty().toUpperCase());
+        updateHintUI();
+        renderBoardUI();
+        startTimer();
+//        System.out.println("Game berhasil di-load!");
+    }
+
     private String showDifficulty() {
         final String[] result = {null};
-        
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initStyle(StageStyle.UNDECORATED);
         
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
-        layout.setStyle("-fx-padding: 20; -fx-border-color: #333; -fx-border-width: 2; -fx-background-color: white;");
+        // 1. Buang setStyle, ganti dengan styleClass
+        layout.getStyleClass().add("dialog-root"); 
         
         Label title = new Label("Choose The Difficulty");
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 18px;");
+        // 2. Buang setStyle, ganti dengan styleClass
+        title.getStyleClass().add("dialog-title"); 
         
         Button btnEasy = new Button("Easy (10 Hint)");
         Button btnMedium = new Button("Medium (6 Hint)");
         Button btnHard = new Button("Hard (3 Hint)");
         Button btnCancel = new Button("Cancel");
         
-        btnEasy.setPrefWidth(150);
-        btnMedium.setPrefWidth(150);
-        btnHard.setPrefWidth(150);
+        btnEasy.setPrefWidth(150); btnMedium.setPrefWidth(150); btnHard.setPrefWidth(150);
         
         btnEasy.setOnAction(e -> { result[0] = "Easy"; dialog.close(); });
         btnMedium.setOnAction(e -> { result[0] = "Medium"; dialog.close(); });
@@ -547,87 +414,65 @@ public class PrimaryController implements Initializable {
         layout.getChildren().addAll(title, btnEasy, btnMedium, btnHard, btnCancel);
         
         Scene scene = new Scene(layout);
+        
+        // --- 3. SUNTIKKAN TEMA KE JENDELA POPUP INI ---
+        java.util.Properties config = ConfigManager.loadConfig();
+        String theme = config.getProperty("theme", "Light").toLowerCase().replace(" ", "");
+        java.net.URL cssUrl = App.class.getResource("css/" + theme + ".css");
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+        }
+        // ----------------------------------------------
+        
         dialog.setScene(scene);
         dialog.showAndWait();
         
         return result[0];
     }
     
-    private void updateHintUI(){
-        if (lblHintCount != null) {
-            lblHintCount.setText(hintLeft + "/" + hintTotal);
+    // --- FUNGSI BGM IN-GAME ---
+    private void setupMarquee() {
+        if (lblMarquee == null || marqueePane == null) return;
+        
+        javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(130, 25);
+        marqueePane.setClip(clip);
+        
+        String trackName = AudioManager.getInstance().getCurrentTrackName();
+        lblMarquee.setText("NOW PLAYING: " + trackName + "   ***   ");
+        
+        if (marqueeTransition != null) {
+            marqueeTransition.stop();
         }
+        
+        // --- TRIK JITU: MENGGUNAKAN TEKS BAYANGAN UNTUK MENGUKUR ---
+        javafx.scene.text.Text shadowText = new javafx.scene.text.Text(lblMarquee.getText());
+        shadowText.setFont(lblMarquee.getFont()); // Samakan font-nya
+        
+        // Objek Text tidak akan pernah berbohong soal panjang aslinya!
+        double textWidth = shadowText.getLayoutBounds().getWidth(); 
+        // -------------------------------------------------------------
+        
+        // --- LOGIKA KECEPATAN STABIL ---
+        double speed = 40.0; // Kecepatan jalan: 40 pixel per detik
+        double distance = 130 + textWidth + 20; // Jarak tempuh total
+        double seconds = distance / speed; // Waktu tempuh dinamis
+        
+        marqueeTransition = new javafx.animation.TranslateTransition(Duration.seconds(seconds), lblMarquee);
+        marqueeTransition.setFromX(130); 
+        marqueeTransition.setToX(-textWidth - 20); // Pastikan teks benar-benar hilang ke kiri
+        
+        marqueeTransition.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        marqueeTransition.setInterpolator(javafx.animation.Interpolator.LINEAR);
+        marqueeTransition.play();
     }
-    
-    private void saveCurrentGame() {
-        int[][] currentBoard = new int[9][9];
-        boolean[][] clues = new boolean[9][9];
-        
-        // extract num from TextField UI to array
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                String txt = boardData[r][c].getText();
-                currentBoard[r][c] = txt.isEmpty() ? 0 : Integer.parseInt(txt);
-                clues[r][c] = boardData[r][c].getProperties().containsKey("clue");
-            }
-        }
-        
-        SaveManager.saveGame(activeDifficulty, secondsRun, hintLeft, currentBoard, clues, currentSolution);
-        System.out.println("Game successfully saved!");
+
+    @FXML
+    private void actNextBGM() {
+        AudioManager.getInstance().nextTrack();
     }
-    
-    private void loadGameData() {
-        java.util.Properties props = SaveManager.loadGame();
-        if (props == null) return;
-        
-        // return info stat
-        this.activeDifficulty = props.getProperty("difficulty");
-        this.secondsRun = Integer.parseInt(props.getProperty("time"));
-        this.hintLeft = Integer.parseInt(props.getProperty("hint"));
-        
-        lblDifficulty.setText(activeDifficulty.toUpperCase());
-        
-        if (activeDifficulty.equals("Easy")) hintTotal = 10;
-        else if (activeDifficulty.equals("Medium")) hintTotal = 6;
-        else hintTotal = 3;
-        
-        updateHintUI();
-        
-        // load String that turned as csv
-        String[] arrBoard = props.getProperty("board").split(",");
-        String[] arrClues = props.getProperty("clues").split(",");
-        String[] arrSol = props.getProperty("solution").split(",");
-        
-        currentSolution = new int[9][9];
-        int index = 0;
-        
-        // 3. fill it again to UI board
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                TextField box = boardData[r][c];
-                box.getProperties().remove("clue"); // clear it first
 
-                int num = Integer.parseInt(arrBoard[index]);
-                boolean isClue = arrClues[index].equals("1");
-                currentSolution[r][c] = Integer.parseInt(arrSol[index]);
-
-                if (num != 0) {
-                    box.setText(String.valueOf(num));
-                    if (isClue) {
-                        box.getProperties().put("clue", true);
-                    } else {
-                        // If not clue, So it was user answer (give blue color)
-                        box.setStyle("-fx-text-fill: #0078D7; -fx-font-weight: bold; -fx-padding: 0;");
-                    }
-                } else {
-                    box.setText("");
-                }
-                index++;
-            }
-        }
-
-        renderBoardUI();
-        startTimer(); // Timer akan otomatis melanjutkan dari secondsRun yang di-load
-        System.out.println("Game berhasil di-load!");
+    @FXML
+    private void actPrevBGM() {
+        AudioManager.getInstance().prevTrack();
     }
 }

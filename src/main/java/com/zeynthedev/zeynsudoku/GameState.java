@@ -10,4 +10,5 @@ package com.zeynthedev.zeynsudoku;
  */
 public class GameState {
     public static boolean isContinue = false;
+    public static String targetDifficulty = "Easy";
 }

@@ -1,17 +1,16 @@
-name: Zeyn Sudoku v1.0.0 Release
+name: Zeyn Sudoku Auto Release
 
 on:
-  workflow_dispatch: # Mengizinkan eksekusi manual tombol "Run workflow" di GitHub
+  workflow_dispatch: # Mengizinkan eksekusi manual
   push:
     tags:
-      - 'v*' # Otomatis jalan kalau kamu membuat release tag (contoh: v1.0.0)
+      - 'v*' # Otomatis jalan kalau membuat release tag apa pun (v1.0, v2.0, v9.99)
 
 jobs:
   build:
     name: Build Installer on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     
-    # Kita menyuruh GitHub menjalankan 2 OS sekaligus (Windows dan Mac)
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
@@ -20,10 +19,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      - name: Set up Java 25
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: '25' # KEMBALIKAN KE 25!
           distribution: 'temurin'
           cache: maven
 
@@ -35,23 +34,27 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir jpackage-input
-          copy target\ZeynSudoku-1.0.0.jar jpackage-input\
-          jpackage --type exe --dest output --name ZeynSudoku --input jpackage-input --main-jar ZeynSudoku-1.0.0.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m" --win-shortcut --win-menu
+          # Menggunakan wildcard (*) untuk mencari versi berapapun, lalu di-copy dengan nama baku
+          Copy-Item target\ZeynSudoku-*.jar -Destination jpackage-input\ZeynSudoku.jar
+          # Memasukkan argumen --vendor
+          jpackage --type exe --dest output --name ZeynSudoku --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m" --win-shortcut --win-menu
 
       # TAHAP MAC (.dmg)
       - name: Build macOS .dmg Installer
         if: runner.os == 'macOS'
         run: |
-          mkdir jpackage-input
-          cp target/ZeynSudoku-1.0.0.jar jpackage-input/
-          jpackage --type dmg --dest output --name ZeynSudoku --input jpackage-input --main-jar ZeynSudoku-1.0.0.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
+          mkdir -p jpackage-input
+          # Mac menggunakan cp (bash) untuk mencopy file
+          cp target/ZeynSudoku-*.jar jpackage-input/ZeynSudoku.jar
+          # Memasukkan argumen --vendor
+          jpackage --type dmg --dest output --name ZeynSudoku --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
 
       # TAHAP UPLOAD KE GITHUB RELEASES
       - name: Upload to GitHub Releases
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') # Hanya upload kalau dipicu oleh Tag Versi
+        if: startsWith(github.ref, 'refs/tags/') 
         with:
           files: |
             output/*.exe
             output/*.dmg
-            target/ZeynSudoku-1.0.0.jar
+            target/ZeynSudoku-*.jar

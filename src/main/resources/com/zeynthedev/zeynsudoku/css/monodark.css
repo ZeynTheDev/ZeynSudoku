@@ -1,0 +1,81 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : May 6, 2026, 9:54:17 PM
+    Author     : Zeyn
+*/
+
+/*
+THEME: Mono Dark
+*/
+
+.root { -fx-background-color: #1E1E1E; }
+.label { -fx-text-fill: #D4D4D4; }
+
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: #58A6FF;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-text-fill: #58A6FF;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #58A6FF;
+    -fx-text-fill: #1E1E1E;
+}
+
+.marquee-box { -fx-background-color: #252526; -fx-border-color: #333333; }
+.marquee-text { -fx-text-fill: #A0A0A0; }
+
+.sudoku-cell { -fx-background-color: #252526; -fx-border-color: #454545; -fx-font-weight: bold; }
+.sudoku-cell.cell-clue { -fx-text-fill: #FFFFFF; }
+.sudoku-cell.cell-user { -fx-text-fill: #58A6FF; }
+.sudoku-cell.cell-selected { -fx-background-color: #062F4A !important; }
+.sudoku-cell.cell-error { -fx-background-color: #4D1313 !important; -fx-text-fill: #F14C4C !important; }
+
+.dialog-root { -fx-background-color: #252526; -fx-border-color: #58A6FF; -fx-border-width: 2px; -fx-padding: 20; }
+.dialog-title { -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #D4D4D4; }
+
+.pause-overlay { -fx-background-color: rgba(30, 30, 30, 0.85); }
+.pause-title { -fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #58A6FF; }
+.pause-subtitle { -fx-font-size: 14px; -fx-text-fill: #A0A0A0; }
+
+.custom-alert.dialog-pane { -fx-background-color: #252526; -fx-border-color: #58A6FF; -fx-border-width: 2px; }
+.custom-alert.dialog-pane .header-panel { -fx-background-color: #1E1E1E; }
+.custom-alert.dialog-pane .label { -fx-text-fill: #D4D4D4; }
+.custom-alert.dialog-pane .button { -fx-background-color: transparent; -fx-border-color: #58A6FF; -fx-border-radius: 4px; -fx-text-fill: #58A6FF; -fx-font-weight: bold; -fx-cursor: hand; }
+.custom-alert.dialog-pane .button:hover { -fx-background-color: #58A6FF; -fx-text-fill: #1E1E1E; }
+
+.record-category { -fx-text-fill: #58A6FF; }
+.record-line { -fx-stroke: #454545; }
+.record-box { -fx-background-color: #252526; -fx-border-color: #58A6FF; -fx-border-width: 1.5px; -fx-border-radius: 5px; -fx-background-radius: 5px; }
+.record-box-title { -fx-text-fill: #58A6FF; }
+.record-box-alt { -fx-background-color: #333333; -fx-border-color: #555555; -fx-border-width: 1.5px; -fx-border-radius: 5px; -fx-background-radius: 5px; }
+.record-box-title-alt { -fx-text-fill: #A0A0A0; }
+
+/* --- SCROLLBAR KUSTOM --- */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent; /* Hilangkan kanvas abu-abu bawaan */
+}
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+.scroll-bar:horizontal .track {
+    -fx-background-color: #232333; /* Warna jalur scrollbar (gelap) */
+    -fx-border-color: #333333;
+}
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #58A6FF; /* Warna pegangan scrollbar (soft blue) */
+    -fx-background-radius: 5px;
+}
+.scroll-bar:horizontal .increment-button, 
+.scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0; /* Sembunyikan tombol panah kecil di ujung scrollbar agar lebih minimalis */
+}
