@@ -1,7 +1,9 @@
-
 # Zeyn Sudoku
 
 Read in: [Bahasa Indonesia](README.id.md)
+
+> [!NOTE]
+> Current latest version: 2.0.0
 
 Zeyn Sudoku is a native desktop Sudoku puzzle game built with Java and JavaFX. This application is designed with a clean interface, smooth functionality, and features on par with professional game standards.
 
@@ -55,6 +57,34 @@ The `.jar` file will be available inside the `target/` directory.
 > [!NOTE]
 > This repository also utilizes GitHub Actions to automatically release Windows `.exe` and macOS `.dmg` installers on the Releases page whenever a new version tag is pushed
 
+## Changelog
+
+Check out the full changelog [here](CHANGELOG.md).
+
+## Having an Issue?
+Encountered a bug or issue while using the application? Report the problem [here](https://github.com/ZeynTheDev/ZeynSudoku/issues).<br/>
+Click the green `New Issue` button on the top right to draft your issue. Please use the following template for faster and better assistance:
+
+```
+### Bug Description
+[A clear and concise description of what the bug is.]
+
+### Steps to Reproduce
+[Explain how to trigger this bug step-by-step]
+1. Go to '...'
+2. Click on '....'
+3. See error
+
+### Expected Behavior
+[A clear and concise description of what you expected to happen.]
+
+### Environment
+- OS: [e.g., Windows 11, macOS Sonoma]
+- ZeynSudoku Version: [e.g., v2.0]
+
+### Screenshots (Highly Recommended)
+[Please drag and drop your screenshots here. A visual proof will greatly help the debugging process!]
+```
 
 ## License
 

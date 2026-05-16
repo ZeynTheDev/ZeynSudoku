@@ -44,7 +44,7 @@ public class SaveManager {
         try (FileOutputStream out = new FileOutputStream(FILE_NAME)) {
             props.store(out, "Zeyn Sudoku Save Game");
         } catch (Exception e) {
-            System.out.println("Failed saving game: " + e.getMessage());
+//            System.out.println("Failed saving game: " + e.getMessage());
         }
     }
     

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Line?>
+
+<VBox alignment="CENTER" spacing="20.0" prefWidth="720.0" prefHeight="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zeynthedev.zeynsudoku.RecordsController">
+    <padding>
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+    </padding>
+
+    <children>
+        <Label text="HALL OF RECORDS">
+            <font>
+                <Font name="System Bold" size="28.0" /> 
+            </font>
+        </Label>
+        
+        <!-- Navigasi Kategori -->
+        <HBox alignment="CENTER" spacing="40.0">
+            <Button text="&lt;" onAction="#actPrev" style="-fx-font-weight: bold; -fx-font-size: 16px;" prefWidth="40"/>
+            <Label fx:id="lblCategory" text="EASY" minWidth="150" alignment="CENTER" styleClass="record-category" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Button text="&gt;" onAction="#actNext" style="-fx-font-weight: bold; -fx-font-size: 16px;" prefWidth="40"/>
+        </HBox>
+
+        <Line endX="300" styleClass="record-line" />
+
+        <!-- Statistik Utama -->
+        <GridPane alignment="CENTER" hgap="20" vgap="15">
+            <Label text="Total Games Played:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-size: 16px;"/>
+            <Label fx:id="lblTotalGames" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <Label text="Total Playtime:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-size: 16px;"/>
+            <Label fx:id="lblTotalTime" text="00:00:00" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <Label text="Total Hints Used:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-size: 16px;"/>
+            <Label fx:id="lblTotalHints" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <Label text="Total Mistakes Made:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-size: 16px;"/>
+            <Label fx:id="lblTotalErrors" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        </GridPane>
+
+        <!-- Area Rekor Spesifik (Berubah tergantung kategori) -->
+        <VBox fx:id="boxBestRecord" alignment="CENTER" spacing="10" styleClass="record-box" style="-fx-padding: 15;">
+            <Label text="BEST RECORD" styleClass="record-box-title" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label fx:id="lblBestTime" text="Time: -" style="-fx-font-size: 14px;"/>
+            <Label fx:id="lblBestDetails" text="Hints Left: - | Errors: -" style="-fx-font-size: 14px;"/>
+        </VBox>
+
+        <VBox fx:id="boxMostPlayed" alignment="CENTER" spacing="10" styleClass="record-box-alt" style="-fx-padding: 15;" managed="false" visible="false">
+            <Label text="MOST PLAYED CATEGORY" styleClass="record-box-title-alt" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label fx:id="lblMostPlayed" text="Easy (0 games)" style="-fx-font-size: 14px;"/>
+        </VBox>
+
+        <!-- Spacer / Ruang Kosong -->
+        <Label text="" prefHeight="20.0" />
+
+        <Button text="Back to Menu" onAction="#actBack" prefWidth="200" prefHeight="40" />
+    </children>
+</VBox>

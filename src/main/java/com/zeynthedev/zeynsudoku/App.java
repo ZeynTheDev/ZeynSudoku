@@ -11,9 +11,6 @@ import java.io.IOException;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
 
     private static Scene scene;
@@ -28,6 +25,9 @@ public class App extends Application {
             }
         });
         
+        // --- PANGGIL TEMA SAAT PERTAMA BUKA APLIKASI ---
+        applyTheme(); 
+        
         stage.setTitle("Zeyn Sudoku");
         stage.setScene(scene);
         stage.show();
@@ -35,6 +35,26 @@ public class App extends Application {
 
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
+        
+        // --- PANGGIL TEMA SAAT PINDAH LAYAR ---
+        applyTheme();
+    }
+
+    // --- FUNGSI KHUSUS PENYUNTIK TEMA ---
+    public static void applyTheme() {
+        java.util.Properties config = ConfigManager.loadConfig();
+        String theme = config.getProperty("theme", "Light").toLowerCase().replace(" ", "");
+        
+        scene.getStylesheets().clear();
+        
+        java.net.URL cssUrl = App.class.getResource("css/" + theme + ".css");
+        
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+//            System.out.println("Theme " + theme + " is loaded.");
+        } else {
+//            System.out.println("CSS file for " + theme + " is not exist!");
+        }
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
@@ -45,5 +65,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

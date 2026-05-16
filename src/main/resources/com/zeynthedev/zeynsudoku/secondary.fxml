@@ -17,6 +17,9 @@
         <VBox alignment="CENTER" spacing="15.0">
             <Button fx:id="btnContinue" text="Continue" onAction="#actContinue" prefWidth="200" prefHeight="40" />
             <Button text="Start New Game" onAction="#actNewGame" prefWidth="200" prefHeight="40" />
+            <Button text="Hall of Records" onAction="#actRecords" prefWidth="200" prefHeight="40" />
+            <Button text="Settings" onAction="#actSettings" prefWidth="200" prefHeight="40" />
+            <Button text="Credits" onAction="#actCredits" prefWidth="200" prefHeight="40"/>
             <Button text="Exit" onAction="#actExit" prefWidth="200" prefHeight="40" /> 
         </VBox>  
     </children>

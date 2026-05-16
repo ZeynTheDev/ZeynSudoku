@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
@@ -19,10 +20,10 @@
                 <GridPane fx:id="sudokuGrid" alignment="CENTER" hgap="2" vgap="2">
                 </GridPane>
 
-                <VBox fx:id="pauseOverlay" alignment="CENTER" visible="false" style="-fx-background-color: rgba(255, 255, 255, 0.95);">
+                <VBox fx:id="pauseOverlay" alignment="CENTER" visible="false" styleClass="pause-overlay">
                     <children>
-                        <Label text="GAME PAUSED" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #333;" />
-                        <Label text="(Click to Continue)" style="-fx-font-size: 14px; -fx-text-fill: #666;">
+                        <Label text="GAME PAUSED" styleClass="pause-title" />
+                        <Label text="(Click to Continue)" styleClass="pause-subtitle">
                             <padding>
                                 <Insets top="10.0" />
                             </padding>
@@ -102,6 +103,21 @@
                     <Button text="?" onAction="#actHint" prefWidth="40" prefHeight="40" style="-fx-font-weight: bold;"/>
                     <Label fx:id="lblHintCount" text="10/10" style="-fx-font-size: 11px; -fx-text-fill: #555; -fx-font-weight: bold;" />
                 </children>
+                <!-- UI PEMUTAR MUSIK BGM -->
+                <HBox alignment="CENTER" spacing="5.0" style="-fx-padding: 10 0 0 0;">
+                    <children>
+                        <Button text="&lt;" minWidth="30.0" prefHeight="25.0" onAction="#actPrevBGM" style="-fx-background-color: #333; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 0;" />
+
+                        <Pane fx:id="marqueePane" minWidth="130.0" maxWidth="130.0" minHeight="25.0" prefHeight="25.0" styleClass="marquee-box" style="-fx-border-radius: 3; -fx-background-radius: 3;">
+                            <children>
+                                <!-- Tambahkan maxWidth="-Infinity" dan hapus warna teks abu-abunya -->
+                                <Label fx:id="lblMarquee" text="NOW PLAYING: -" minWidth="-Infinity" maxWidth="-Infinity" layoutY="5.0" styleClass="marquee-text" style="-fx-font-family: monospace; -fx-font-size: 11px; -fx-font-weight: bold;" />
+                            </children>
+                        </Pane>
+
+                        <Button text="&gt;" minWidth="30.0" prefHeight="25.0" onAction="#actNextBGM" style="-fx-background-color: #333; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 0;" />
+                    </children>
+                </HBox>
             </VBox>
         </children>
     </VBox>

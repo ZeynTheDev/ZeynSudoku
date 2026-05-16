@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox alignment="CENTER" spacing="30.0" prefWidth="720.0" prefHeight="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zeynthedev.zeynsudoku.SettingsController">
+    <padding>
+        <Insets bottom="40.0" left="60.0" right="60.0" top="40.0" />
+    </padding>
+
+    <children>
+        <Label text="GAME SETTINGS">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+        </Label>
+        
+        <GridPane alignment="CENTER" hgap="30" vgap="25">
+            <!-- PENGATURAN TEMA -->
+            <Label text="Visual Theme:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="cmbTheme" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Light" />
+                        <String fx:value="Mono Dark" />
+                        <String fx:value="Classic Dark" />
+                        <String fx:value="Vampire" />
+                        <String fx:value="Cappuccino" />
+                        <String fx:value="Nature" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- PENGATURAN BGM PACK -->
+            <Label text="BGM Playlist:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="cmbPack" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Pack 1: Basic" />
+                        <String fx:value="Pack 2: Classic" />
+                        <String fx:value="Pack 3: Touhou" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- PENGATURAN BGM VOLUME -->
+            <Label text="Music Volume:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Slider fx:id="sldBgm" min="0" max="100" value="50" prefWidth="150" showTickMarks="true" showTickLabels="true" majorTickUnit="25"/>
+                <Label fx:id="lblBgmVal" text="50%" style="-fx-font-size: 14px;"/>
+            </HBox>
+
+            <!-- PENGATURAN SFX VOLUME -->
+            <Label text="SFX Volume:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <Slider fx:id="sldSfx" min="0" max="100" value="70" prefWidth="150" showTickMarks="true" showTickLabels="true" majorTickUnit="25"/>
+                <Label fx:id="lblSfxVal" text="70%" style="-fx-font-size: 14px;"/>
+            </HBox>
+        </GridPane>
+
+        <HBox alignment="CENTER" spacing="20" style="-fx-padding: 30 0 0 0;">
+            <Button text="Cancel" onAction="#actCancel" prefWidth="120" prefHeight="40" style="-fx-font-size: 14px;"/>
+            <Button text="Apply Settings" onAction="#actApply" prefWidth="150" prefHeight="40" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #0078D7; -fx-text-fill: white;"/>
+        </HBox>
+    </children>
+</VBox>

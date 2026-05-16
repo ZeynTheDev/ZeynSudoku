@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" spacing="20.0" prefWidth="720.0" prefHeight="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zeynthedev.zeynsudoku.CreditsController">
+    <padding>
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+    </padding>
+
+    <children>
+        <Label text="CREDITS">
+            <font>
+                <Font name="System Bold" size="28.0" /> 
+            </font>
+        </Label>
+        
+        <HBox alignment="CENTER" spacing="20.0">
+            
+            <VBox alignment="CENTER" spacing="15.0" minWidth="250.0" prefWidth="250.0" styleClass="record-box" style="-fx-padding: 20;">
+                
+                    <VBox alignment="CENTER" spacing="5.0">
+                        <Label text="PROGRAMMING | UI/UX" styleClass="record-category" style="-fx-font-weight: bold;"/>
+                        <Label text="Zeyn (zeynthedev)" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5.0">
+                        <Label text="SOUND EFFECTS (SFX)" styleClass="record-category" style="-fx-font-weight: bold;"/>
+
+                        <TextFlow textAlignment="CENTER" prefWidth="210.0">
+                            <children>
+                                <Text text="Place SFX | Provided by " style="-fx-font-size: 12px;" />
+                                <Hyperlink text="kauasilbershlachparodes" onAction="#actOpenLink" userData="https://pixabay.com/id/sound-effects/teknologi-chutter-click-494024/" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                            </children>
+                        </TextFlow>
+
+                        <TextFlow textAlignment="CENTER" prefWidth="210.0">
+                            <children>
+                                <Text text="Win SFX | Provided by " style="-fx-font-size: 12px;" />
+                                <Hyperlink text="Mrstokes302" onAction="#actOpenLink" userData="https://pixabay.com/id/sound-effects/success-videogame-sfx-mrstokes302-423626/" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                            </children>
+                        </TextFlow>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5.0">
+                        <Label text="SPECIAL THANKS" styleClass="record-category" style="-fx-font-weight: bold;"/>
+                        <Label text="DIMAZAF" />
+                        <Label text="rayhanharryw" />
+                        <Label text="" />
+
+                        <Label text="Thank you for accepting on being this game tester after my thre-ahem, offering :)" wrapText="true" textAlignment="CENTER" prefWidth="210.0" />
+                    </VBox>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="10.0" prefWidth="350.0">
+                <Label text="MUSIC COMPOSERS (BGM)" styleClass="record-category" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                
+                <ScrollPane vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" fitToHeight="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <content>
+                        <HBox spacing="15.0" style="-fx-padding: 5 5 15 5;">
+                            
+                            <VBox alignment="TOP_CENTER" spacing="8.0" minWidth="200.0" styleClass="record-box" style="-fx-padding: 15;">
+                                <Label text="PACK 1: BASIC" styleClass="record-category" style="-fx-font-weight: bold;"/>
+                                <Label text="Composed by 1144ghost" />
+                                <Label text="" />
+                                <Label text="Find 1144ghost on Itch Io and support him!" />
+                                <Hyperlink text="Visit Him Here" onAction="#actOpenLink" userData="https://1144ghost.itch.io/cutycozy-music-pack-2" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />  
+                            </VBox>
+
+                            <VBox alignment="TOP_CENTER" spacing="8.0" minWidth="200.0" styleClass="record-box" style="-fx-padding: 15;">
+                                <Label text="PACK 2: CLASSIC" styleClass="record-category" style="-fx-font-weight: bold;"/>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Air on G String" style="-fx-font-weight: bold;" />
+                                    <Label text="Composed by Johann Sebastian" />  
+                                    <Hyperlink text="Provided on YouTube by Mozafunkula" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=GMkmQlfOJDk" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Clair de Lune" style="-fx-font-weight: bold;" />
+                                    <Label text="Composed by Claude Debussy" />  
+                                    <Hyperlink text="Provided on YouTube by Johann Debussy" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=X-Xxqt6Xdio" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Gymnopédie No.1" style="-fx-font-weight: bold;" />
+                                    <Label text="Composed by Erik Satie" />  
+                                    <Hyperlink text="Provided on YouTube by DistantMirrors" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=S-Xm7s9eGxU" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Nocturne Op.9 No.2" style="-fx-font-weight: bold;" />
+                                    <Label text="Composed by Frédéric Chopin" />  
+                                    <Hyperlink text="Provided on YouTube by andrea romano" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=9E6b3swbnWg" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Rêverie" style="-fx-font-weight: bold;" />
+                                    <Label text="Composed by Claude Debussy" />  
+                                    <Hyperlink text="Provided on YouTube by AleksandrSolzenicyn" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=QRjllL-MP0U" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                            </VBox>
+
+                            <VBox alignment="TOP_CENTER" spacing="8.0" minWidth="200.0" styleClass="record-box" style="-fx-padding: 15;">
+                                <Label text="PACK 3: TOUHOU" styleClass="record-category" style="-fx-font-weight: bold;"/>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Beloved Tomboyish Girl (Slowed Down)" style="-fx-font-weight: bold;" />
+                                    <Label text="Originally composed by ZUN (Jun'ya Ōta)" />  
+                                    <Hyperlink text="Provided on YouTube by Sky Anne" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=JUEPu71z9sA" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="もし、空が晴れるなら (If the Sky Clears...)" style="-fx-font-weight: bold;" />
+                                    <Label text="Arranged by DDBY" />  
+                                    <Hyperlink text="Provided on YouTube by 9 Ball" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=AUDjqG83AJg" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                    <HBox alignment="CENTER" spacing="3.0">
+                                        <Label text="Support the original creator on " />
+                                        <Hyperlink  text="here" onAction="#actOpenLink" userData="https://ddby.jp/category/cd-album/touhou/cafe/" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                    </HBox>
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="Lullaby of Deserted Hell (Orchestra Arrange)" style="-fx-font-weight: bold;" />
+                                    <Label text="Originally composed by ZUN (Jun'ya Ōta) | Arranged by ManikA" wrapText="true" textAlignment="CENTER" prefWidth="270.0" minHeight="-Infinity"/>  
+                                    <Hyperlink text="Provided on YouTube by ManikA" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=JAmgIKYsUdM" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="The Gensokyo the Gods Loved (RE-EXTENDED)" style="-fx-font-weight: bold;" />
+                                    <Label text="Originally composed by ZUN (Jun'ya Ōta)" />  
+                                    <Hyperlink text="Provided on YouTube by ScarletFlameFlandre" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=6gtccEJK04I" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                </VBox>
+                                
+                                <VBox alignment="CENTER" spacing="0.0">
+                                    <Label text="タイニーリトル・アジアンタム - Instrumental (Tiny Little Adiantum - Instrumental)" style="-fx-font-weight: bold;"  wrapText="true" textAlignment="CENTER" prefWidth="270.0" minHeight="-Infinity" />
+                                    <Label text="Originally arranged by Shibayan Records" />  
+                                    <Hyperlink text="Provided on YouTube by aloox" onAction="#actOpenLink" userData="https://www.youtube.com/watch?v=E_V5MM1gF00" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                    <HBox alignment="CENTER" spacing="3.0">
+                                        <Label text="Support the original creator on " />
+                                        <Hyperlink  text="here" onAction="#actOpenLink" userData="http://shibayan.info/stal1301/" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                    </HBox>
+                                    <HBox alignment="CENTER" spacing="3.0">
+                                        <Label text="Available for digital purchase " />
+                                        <Hyperlink  text="here" onAction="#actOpenLink" userData="https://booth.pm/en/items/1492779" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                        <Label text=" or " />
+                                        <Hyperlink  text="here" onAction="#actOpenLink" userData="https://www.dlsite.com/home/work/=/product_id/RJ260060.html?locale=en_US" style="-fx-font-size: 12px; -fx-text-fill: #FF6680; -fx-padding: 0;" />
+                                    </HBox>  
+                                </VBox>
+                            </VBox>
+                            
+                            </HBox>
+                    </content>
+                </ScrollPane>
+            </VBox>
+            
+        </HBox>
+
+        <Label text="" prefHeight="10.0" />
+
+        <Button text="Back to Menu" onAction="#actBack" prefWidth="200" prefHeight="40" />
+    </children>
+</VBox>

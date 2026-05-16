@@ -2,6 +2,9 @@
 
 Read in: [English](README.md)
 
+> [!NOTE]
+> Current latest version: 2.0.0
+
 Zeyn Sudoku adalah permainan teka-teki Sudoku berbasis desktop native yang dibangun menggunakan Java dan JavaFX. Aplikasi ini dirancang dengan antarmuka yang bersih, fungsionalitas yang mulus, dan fitur setara dengan standar game profesional.
 
 ## Fitur Utama
@@ -53,6 +56,35 @@ File `.jar` akan tersedia di dalam folder `target/`.
 
 > [!NOTE]
 > Repositori ini juga menggunakan GitHub Actions untuk secara otomatis merilis installer Windows `.exe` dan macOS `.dmg` di halaman Releases setiap kali ada tag versi baru.
+
+## Log Perubahan (Changelog)
+
+Lihat log perubahan lengkapnya [di sini](CHANGELOG.md).
+
+## Menemukan Kendala?
+Menemukan *bug* atau masalah saat menggunakan aplikasi ini? Laporkan masalahnya [di sini](https://github.com/ZeynTheDev/ZeynSudoku/issues).<br/>
+Klik tombol `New Issue` berwarna hijau di kanan atas untuk menulis laporanmu. Harap gunakan templat berikut agar dapat dibantu dengan lebih cepat dan tepat:
+
+```markdown
+### Deskripsi Bug
+[Deskripsi yang jelas dan singkat mengenai bug yang terjadi.]
+
+### Langkah-langkah untuk Mereproduksi
+[Jelaskan cara memicu bug ini selangkah demi selangkah]
+1. Pergi ke '...'
+2. Klik pada '....'
+3. Muncul error
+
+### Perilaku yang Diharapkan
+[Deskripsi yang jelas dan singkat mengenai apa yang seharusnya terjadi.]
+
+### Lingkungan (Environment)
+- OS: [contoh: Windows 11, macOS Sonoma]
+- Versi ZeynSudoku: [contoh: v2.0]
+
+### Tangkapan Layar / Screenshots (Sangat Disarankan)
+[Silakan seret dan lepas (drag and drop) screenshot-mu di sini. Bukti visual akan sangat membantu proses perbaikan (debugging)!]
+```
 
 ## Lisensi
 Repositori ini dilisensikan di bawah Lisensi MIT

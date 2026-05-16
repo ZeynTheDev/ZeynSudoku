@@ -1,0 +1,195 @@
+/* =========================================
+   TEMA: VAMPIRE (Gelap, Keunguan, Magenta) 
+   ========================================= */
+
+.root {
+    -fx-background-color: #1A1A24; /* Background utama */
+}
+
+.label {
+    -fx-text-fill: #E0E0E0;
+}
+
+/* --- THEMING TOMBOL (PINK VAMPIRE) --- */
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF6680;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-text-fill: #FF6680;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #FF6680;
+    -fx-text-fill: #1A1A24; /* Saat di-hover, tombol jadi solid pink, teks jadi gelap */
+}
+
+/* --- KOTAK PEMUTAR MUSIK (MARQUEE) --- */
+.marquee-box {
+    -fx-background-color: #232333;
+    -fx-border-color: #404059;
+}
+.marquee-text {
+    -fx-text-fill: #9FA0B5;
+}
+
+/* --- PAPAN SUDOKU --- */
+.sudoku-cell {
+    /* Background dasar kotak yang gelap tapi tidak segelap root */
+    -fx-background-color: #232333; 
+    -fx-border-color: #404059;
+    -fx-font-weight: bold;
+}
+
+/* Angka Bawaan (Soal) */
+.sudoku-cell.cell-clue {
+    -fx-text-fill: #FFFFFF; /* Putih terang agar mudah dibaca */
+}
+
+/* Angka Jawaban User */
+.sudoku-cell.cell-user {
+    -fx-text-fill: #FF6680; /* Pink cerah */
+}
+
+/* Angka yang Sedang Disorot / Dipilih */
+.sudoku-cell.cell-selected {
+    /* Ungu kemerahan yang LEBIH TERANG agar tidak tertimbun */
+    -fx-background-color: #4A334B !important; 
+}
+
+/* Jika terjadi Error / Bentrok */
+.sudoku-cell.cell-error {
+    -fx-background-color: #5C1A2B !important; /* Background Merah Darah Gelap */
+    -fx-text-fill: #FF3366 !important; /* Teks Neon Red */
+}
+
+/* --- KOTAK DIALOG (New Game) --- */
+.dialog-root {
+    -fx-background-color: #232333; /* Background gelap khas vampire */
+    -fx-border-color: #FF6680;     /* Border pink menyala */
+    -fx-border-width: 2px;
+    -fx-padding: 20;
+}
+
+.dialog-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #E0E0E0;
+}
+
+/* --- LAYAR PAUSE (Pause Overlay) --- */
+.pause-overlay {
+    /* Background hitam keunguan tembus pandang (transparansi 85%) */
+    -fx-background-color: rgba(26, 26, 36, 0.85); 
+}
+
+.pause-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FF6680; /* Teks judul pink menyala */
+}
+
+.pause-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #9FA0B5; /* Teks subtitle abu-abu pudar */
+}
+
+/* =========================================
+   KUSTOMISASI ALERT DIALOG BAWAAN JAVAFX
+   ========================================= */
+
+/* Background Utama Jendela Alert */
+.custom-alert.dialog-pane {
+    -fx-background-color: #232333;
+    -fx-border-color: #FF6680;
+    -fx-border-width: 2px;
+}
+
+/* Bagian Header (Tempat tulisan "Return") */
+.custom-alert.dialog-pane .header-panel {
+    -fx-background-color: #1A1A24; /* Warnanya dibikin lebih gelap sedikit agar kontras */
+}
+
+/* Warna semua teks di dalam Alert */
+.custom-alert.dialog-pane .label {
+    -fx-text-fill: #E0E0E0;
+}
+
+/* Tombol OK dan Cancel bawaan Alert */
+.custom-alert.dialog-pane .button {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF6680;
+    -fx-border-radius: 4px;
+    -fx-text-fill: #FF6680;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Efek Hover untuk tombol Alert */
+.custom-alert.dialog-pane .button:hover {
+    -fx-background-color: #FF6680;
+    -fx-text-fill: #1A1A24;
+}
+
+/* =========================================
+   HALAMAN HALL OF RECORDS
+   ========================================= */
+
+/* Tulisan Kategori (EASY/MEDIUM/HARD) */
+.record-category {
+    -fx-text-fill: #FF6680; /* Pink menyala khas Vampire */
+}
+
+/* Garis Pembatas */
+.record-line {
+    -fx-stroke: #404059; /* Warna abu-abu keunguan (sama seperti border Sudoku) */
+}
+
+/* Kotak Best Record */
+.record-box {
+    -fx-background-color: #232333; /* Hitam keunguan */
+    -fx-border-color: #FF6680;     /* Border Pink */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+.record-box-title {
+    -fx-text-fill: #FF6680;
+}
+
+/* Kotak Most Played (Kategori Global) */
+.record-box-alt {
+    -fx-background-color: #2A2A3D; /* Warna slightly berbeda agar bisa dibedakan */
+    -fx-border-color: #9FA0B5;     /* Border abu-abu terang */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+.record-box-title-alt {
+    -fx-text-fill: #9FA0B5;
+}
+
+/* --- SCROLLBAR KUSTOM --- */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent; /* Hilangkan kanvas abu-abu bawaan */
+}
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+.scroll-bar:horizontal .track {
+    -fx-background-color: #232333; /* Warna jalur scrollbar (gelap) */
+    -fx-border-color: #333333;
+}
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #FF6680; /* Warna pegangan scrollbar (Pink) */
+    -fx-background-radius: 5px;
+}
+.scroll-bar:horizontal .increment-button, 
+.scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0; /* Sembunyikan tombol panah kecil di ujung scrollbar agar lebih minimalis */
+}
