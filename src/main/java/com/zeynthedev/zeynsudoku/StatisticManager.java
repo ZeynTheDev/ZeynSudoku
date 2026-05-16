@@ -8,10 +8,20 @@ import java.util.Properties;
 public class StatisticManager {
     private static final String FILE_NAME = "zeyn_stats.dat";
     
+    // --- FUNGSI BARU: MENCARI RUMAH YANG AMAN UNTUK DATA ---
+    private static File getStatFile() {
+        String userHome = System.getProperty("user.home");
+        File saveDir = new File(userHome, ".zeynsudoku");
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        }
+        return new File(saveDir, FILE_NAME);
+    }
+    
     // 1. load data or set default (0) if there's no save file
     public static Properties loadStats() {
         Properties props = new Properties();
-        File file = new File(FILE_NAME);
+        File file = getStatFile(); // Gunakan fungsi baru
         
         if (file.exists()) {
             try (FileInputStream in = new FileInputStream(file)) {
@@ -37,7 +47,7 @@ public class StatisticManager {
             props.setProperty(d + ".totalGames", "0");
             props.setProperty(d + ".totalTime", "0");
             props.setProperty(d + ".totalHints", "0");
-            props.setProperty(d + ".totalErrors", "0"); // Diperbaiki: Ditambah 's'
+            props.setProperty(d + ".totalErrors", "0"); 
             
             // best record logic (AllTime doesn't need it)
             if (!d.equals("AllTime")) {
@@ -53,7 +63,7 @@ public class StatisticManager {
     
     // 3. saving stats logic
     private static void saveStats(Properties props) {
-        try (FileOutputStream out = new FileOutputStream(FILE_NAME)) {
+        try (FileOutputStream out = new FileOutputStream(getStatFile())) { // Gunakan fungsi baru
             props.store(out, "Zeyn Sudoku - Hall of Records");
         } catch (Exception e) {
 //            System.out.println("Failed saving statistic: " + e.getMessage());
@@ -64,13 +74,13 @@ public class StatisticManager {
     public static void recordWin(String difficulty, int timeInSec, int hintUsed, int errorMade, int hintLeft) {
         Properties props = loadStats();
         
-        // 4.a. update all-time stats (PENGAMAN GANDA: ditambah fallback "0")
+        // 4.a. update all-time stats
         props.setProperty("AllTime.totalGames", String.valueOf(Integer.parseInt(props.getProperty("AllTime.totalGames", "0")) + 1));
         props.setProperty("AllTime.totalTime", String.valueOf(Integer.parseInt(props.getProperty("AllTime.totalTime", "0")) + timeInSec));
         props.setProperty("AllTime.totalHints", String.valueOf(Integer.parseInt(props.getProperty("AllTime.totalHints", "0")) + hintUsed));
         props.setProperty("AllTime.totalErrors", String.valueOf(Integer.parseInt(props.getProperty("AllTime.totalErrors", "0")) + errorMade));
         
-        // 4.b. update stats by category (easy/medium/hard)
+        // 4.b. update stats by category
         int currentGames = Integer.parseInt(props.getProperty(difficulty + ".totalGames", "0")) + 1;
         props.setProperty(difficulty + ".totalGames", String.valueOf(currentGames));
         props.setProperty(difficulty + ".totalTime", String.valueOf(Integer.parseInt(props.getProperty(difficulty + ".totalTime", "0")) + timeInSec));

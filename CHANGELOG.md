@@ -52,3 +52,6 @@ This changelog is added on v2.0 and will be used as the application update docum
 
 4. **First Load Theme Bug**: Fixed an issue where the theme was not immediately applied when the application was first launched (First Load).<br/>
 ***Bug Tema Muatan Pertama**: Memperbaiki isu di mana tema tidak langsung teraplikasikan saat aplikasi pertama kali dijalankan (First Load).*
+
+## Changelog - ZeynSudoku v2.0.1
+Hotfix: fixing application file path to make it easier on write/rewrite while application processing.

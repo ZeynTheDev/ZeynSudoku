@@ -34,20 +34,26 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir jpackage-input
-          # Menggunakan wildcard (*) untuk mencari versi berapapun, lalu di-copy dengan nama baku
           Copy-Item target\ZeynSudoku-*.jar -Destination jpackage-input\ZeynSudoku.jar
-          # Memasukkan argumen --vendor
-          jpackage --type exe --dest output --name ZeynSudoku --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m" --win-shortcut --win-menu
+          
+          # Hapus huruf 'v' dari depan tag GitHub (misal v2.0.1 jadi 2.0.1)
+          $APP_VERSION = "${{ github.ref_name }}".TrimStart('v')
+          
+          # Tambahkan --app-version
+          jpackage --type exe --dest output --name ZeynSudoku --app-version $APP_VERSION --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m" --win-shortcut --win-menu
 
       # TAHAP MAC (.dmg)
       - name: Build macOS .dmg Installer
         if: runner.os == 'macOS'
         run: |
           mkdir -p jpackage-input
-          # Mac menggunakan cp (bash) untuk mencopy file
           cp target/ZeynSudoku-*.jar jpackage-input/ZeynSudoku.jar
-          # Memasukkan argumen --vendor
-          jpackage --type dmg --dest output --name ZeynSudoku --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
+          
+          # Hapus huruf 'v' dari depan tag GitHub menggunakan bash string manipulation
+          APP_VERSION=${GITHUB_REF_NAME#v}
+          
+          # Tambahkan --app-version
+          jpackage --type dmg --dest output --name ZeynSudoku --app-version $APP_VERSION --vendor "Zeyn The Dev" --input jpackage-input --main-jar ZeynSudoku.jar --main-class com.zeynthedev.zeynsudoku.Launcher --java-options "-Xmx512m"
 
       # TAHAP UPLOAD KE GITHUB RELEASES
       - name: Upload to GitHub Releases
