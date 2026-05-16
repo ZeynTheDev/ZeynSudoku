@@ -8,17 +8,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
-/**
- *
- * @author Zeyn
- */
+
 public class ConfigManager {
     private static final String FILE_NAME = "zeyn_config.dat";
     
+    // --- FUNGSI BARU: MENCARI RUMAH YANG AMAN UNTUK DATA ---
+    private static File getConfigFile() {
+        String userHome = System.getProperty("user.home");
+        File saveDir = new File(userHome, ".zeynsudoku");
+        if (!saveDir.exists()) {
+            saveDir.mkdirs(); // Buat folder rahasia jika belum ada
+        }
+        return new File(saveDir, FILE_NAME);
+    }
+    
     public static Properties loadConfig() {
         Properties props = new Properties();
-        
-        File file = new File(FILE_NAME);
+        File file = getConfigFile(); // Gunakan fungsi baru
         
         if (file.exists()) {
             try (FileInputStream in = new FileInputStream(file)) {
@@ -45,10 +51,10 @@ public class ConfigManager {
     }
     
     private static void saveConfig(Properties props) {
-        try (FileOutputStream out = new FileOutputStream(FILE_NAME)) {
+        try (FileOutputStream out = new FileOutputStream(getConfigFile())) { // Gunakan fungsi baru
             props.store(out, "Zeyn Sudoku - User Settings");
         } catch (Exception e) {
-            System.out.println("Failed saving config: " + e.getMessage());
+//            System.out.println("Failed saving config: " + e.getMessage());
         }
     }
     
@@ -61,6 +67,5 @@ public class ConfigManager {
         props.setProperty("bgmPack", String.valueOf(bgmPack));
         
         saveConfig(props);
-//        System.out.println("Setting saved: " + theme + " | BGM Vol: " + (int)bgmVolume + " | SFX Vol: " + (int)sfxVolume + " | Pack: " + bgmPack);
     }
 }

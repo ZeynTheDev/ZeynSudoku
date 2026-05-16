@@ -40,7 +40,8 @@ public class AudioManager {
         //pack 0: itch io bgm
         {"bgm/basic/track_1.mp3", "bgm/basic/track_2.mp3", "bgm/basic/track_6.mp3", "bgm/basic/track_7.mp3", "bgm/basic/track_10.mp3"},
         // Pack 1: Classic
-        {"bgm/classic/air_on_g_string.mp3", "bgm/classic/clair_de_lune.mp3", "bgm/classic/gymnopédie_no.1.mp3", "bgm/classic/nocturne_op.9_no.2", "bgm/classic/rêverie"},
+        {"bgm/classic/air_on_g_string.mp3", "bgm/classic/clair_de_lune.mp3", "bgm/classic/gymnopédie_no.1.mp3", "bgm/classic/nocturne_op.9_no.2.mp3",
+		"bgm/classic/rêverie.mp3"},
         // Pack 2: Touhou
         {"bgm/touhou/beloved_tomboyish_girl_(slowed).mp3", "bgm/touhou/if_the_sky_clears_(cafe_de_touhou).mp3", "bgm/touhou/lullaby_of_deserted_hell_(orchestra_arrange).mp3", "bgm/touhou/the_gensokyo_the_gods_loved_(re-extended).mp3", "bgm/touhou/tiny_little_adiantum_(instrumental).mp3"},
         // Pack 3: Custom / TBA
@@ -64,7 +65,7 @@ public class AudioManager {
             URL winUrl = getClass().getResource("sfx/win.mp3");
             if (winUrl != null) sfxWin = new AudioClip(winUrl.toString());
             
-            URL matchUrl = getClass().getResource("sfx.match.mp3");
+            URL matchUrl = getClass().getResource("sfx/match.mp3");
             if (matchUrl != null) sfxMatch = new AudioClip(matchUrl.toString());
 
             URL errorUrl = getClass().getResource("sfx/error.mp3");
